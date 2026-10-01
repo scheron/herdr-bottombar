@@ -111,6 +111,7 @@ class Panel:
         self.terminal_id = None
         self.tab_id = os.environ.get("HERDR_TAB_ID", "")
         self.focused = False
+        self.came_from = None
         self.visible = True
         self.spaces = []
         self.agents = []
@@ -136,10 +137,12 @@ class Panel:
             me = next((p for p in panes.values() if p.get("terminal_id") == self.terminal_id), None)
         if me is None:
             me = panes.get(self.pane_id)
+        entered = False
         if me:
             self.pane_id = me["pane_id"]
             self.terminal_id = me.get("terminal_id")
             self.tab_id = me.get("tab_id", self.tab_id)
+            entered = bool(me.get("focused")) and not self.focused
             self.focused = bool(me.get("focused"))
             tab = next((t for t in snap.get("tabs", []) if t["tab_id"] == self.tab_id), None)
             if tab and tab.get("pane_count", 2) <= 1:
@@ -149,6 +152,9 @@ class Panel:
         layouts = {l["tab_id"]: l for l in snap.get("layouts", [])}
         tabs = {t["tab_id"]: t for t in snap.get("tabs", [])}
         self.keep_height(layouts.get(self.tab_id))
+        focused_here = (layouts.get(self.tab_id) or {}).get("focused_pane_id")
+        if focused_here not in (None, self.pane_id):
+            self.came_from = focused_here
 
         def work_cwd(tab_id):
             layout = layouts.get(tab_id) or {}
@@ -186,7 +192,16 @@ class Panel:
             })
         agents.sort(key=lambda a: (AGENT_PRIORITY.get(a["status"], 9), -a["seq"]))
         self.agents = agents
+        if entered:
+            self.enter()
         return True
+
+    def enter(self):
+        """Start on the current space, as herdr's navigate mode starts on the current workspace."""
+        self.focused = True
+        self.col = 0
+        self.sel = [None, None]
+        self.keep_visible(0, self.selected_index(0))
 
     def keep_height(self, layout):
         parent_h = bar_parent(layout, self.pane_id)
@@ -348,7 +363,7 @@ class Panel:
         item = items[idx]
         try:
             if call("pane.get", {"pane_id": self.pane_id})["pane"].get("focused"):
-                call("pane.focus_direction", {"pane_id": self.pane_id, "direction": "up"})
+                self.leave()
             if col == 0:
                 call("workspace.focus", {"workspace_id": item["id"]})
             else:
@@ -357,6 +372,17 @@ class Panel:
             pass
 
     def leave(self):
+        """Hand focus back to the pane it came from, or to the pane above once that one is gone:
+        above a full-width bar herdr picks the leftmost pane."""
+        self.focused = False
+        try:
+            if self.came_from:
+                pane = call("pane.get", {"pane_id": self.came_from})["pane"]
+                if pane.get("tab_id") == self.tab_id:
+                    call("pane.focus", {"pane_id": self.came_from})
+                    return
+        except (OSError, HerdrError):
+            pass
         try:
             call("pane.focus_direction", {"pane_id": self.pane_id, "direction": "up"})
         except (OSError, HerdrError):
@@ -390,6 +416,8 @@ class Panel:
             self.activate(col, idx)
 
     def on_key(self, key):
+        if not self.focused:
+            self.enter()
         if key in (b"j", b"\x1b[B", b"\x1bOB"):
             self.move(1)
         elif key in (b"k", b"\x1b[A", b"\x1bOA"):
@@ -402,6 +430,12 @@ class Panel:
             self.col = 1 - self.col
         elif key in (b"\r", b"\n", b" "):
             self.activate(self.col, self.selected_index(self.col))
+        elif key.isdigit() and key != b"0":
+            idx = int(key) - 1
+            if idx < len(self.spaces):
+                self.col = 0
+                self.sel[0] = self.spaces[idx]["id"]
+                self.activate(0, idx)
         elif key in (b"\x1b", b"q"):
             self.leave()
 

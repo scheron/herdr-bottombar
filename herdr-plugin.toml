@@ -17,6 +17,12 @@ title = "bottombar: fold the bar into the tab bar, or unfold it"
 contexts = ["pane", "workspace"]
 command = ["/usr/bin/python3", "-B", "herdr/manage.py", "minimize"]
 
+[[actions]]
+id = "navigate"
+title = "bottombar: move through spaces in the bar"
+contexts = ["pane", "workspace"]
+command = ["/usr/bin/python3", "-B", "herdr/manage.py", "navigate"]
+
 [[panes]]
 id = "bar"
 title = "bottombar"

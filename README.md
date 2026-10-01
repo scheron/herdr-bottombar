@@ -42,13 +42,18 @@ library.
 |---|---|---|
 | Spaces and agents | herdr's own sidebar | a bar at the bottom of every tab |
 | The sidebar key | collapses the sidebar | folds the bar into the tab bar |
+| The navigate key | moves through spaces in the sidebar | moves through spaces in the bar |
 | Tab bar | where your config puts it | at the bottom |
 | Pane borders | as your config draws them | no outer frame, no gaps |
 
 Standard is herdr exactly as you configured it. "The sidebar key" is whatever
 your `toggle_sidebar` is bound to — herdr's default is `prefix+b` — and in the
 vertical layout bottombar hands it to its own `minimize` action, so the same key
-folds whichever panel is on screen.
+folds whichever panel is on screen. "The navigate key" is your
+`workspace_picker` — herdr's default is `prefix+w` — whose arrow-key cursor
+herdr draws only in the sidebar; bottombar hands it to its `navigate` action,
+which takes you into the bar on the current space, unfolding the bar if it is
+folded.
 
 Folded, the bar closes and its gist moves to the right end of the tab bar:
 
@@ -67,15 +72,18 @@ how far it is ahead (`↑`) of or behind (`↓`) its upstream. Agents on the rig
 in attention order — blocked, done, working, idle — with a count of the ones
 that need you in the header.
 
-Click a space or an agent to go there; the wheel scrolls a column. The bar is a
-pane, so `prefix+j` from the pane above focuses it, and then:
+Click a space or an agent to go there; the wheel scrolls a column. The navigate
+key (`prefix+w`) takes you into the bar, as it takes you into the sidebar; the
+bar is a pane, so `prefix+j` from the pane above gets there too. Either way you
+start on the current space, and then:
 
 | Key | Does |
 |---|---|
-| `j` `k` | Move |
-| `h` `l` `Tab` | Switch column |
+| `j` `k` `↓` `↑` | Move |
+| `h` `l` `←` `→` `Tab` | Switch column |
 | `Enter` | Go to the selected space or agent |
-| `Esc` `q` | Back to the pane above |
+| `1`–`9` | Go to that space |
+| `Esc` `q` | Back to the pane you came from |
 
 ## How it swaps layouts
 

@@ -16,8 +16,8 @@ then drive the plugin on a throwaway herdr server (below)
 
 ## Layout
 
-- `herdr-plugin.toml` — actions `layout` and `minimize`, the `bar` pane, and
-  `manage.py sync` on startup, `tab.created` and `tab.focused`.
+- `herdr-plugin.toml` — actions `layout`, `minimize` and `navigate`, the `bar`
+  pane, and `manage.py sync` on startup, `tab.created` and `tab.focused`.
 - `herdr/manage.py` — the config swap and keeping one bar per tab.
 - `herdr/panel.py` — the bar itself, a full-screen TUI over the socket API.
 - `herdr/status.py` — the one line the tab bar shows while the bar is folded.
@@ -58,6 +58,17 @@ session at once.
   which is also how it finds its way back — and reloads. A symlinked config is
   relinked to `<base>`; a regular file waits as `config.toml.bottombar-base`.
   The user's `toggle_sidebar` key is taken over by `minimize` in the copy.
+- **Navigate mode draws only in the sidebar.** The cursor `workspace_picker`
+  moves with the arrows lives in the client, out of reach of the API, and is
+  painted only into the sidebar, so at width 0 it moves unseen. The copy hands
+  that key to `navigate`, which focuses the tab's bar with `plugin.pane.focus`.
+  The bar starts on the current space whenever it gains focus, noticed on its
+  next refresh or its first key, whichever comes first — not from focus
+  reports: `pane.focus` sends none, and `plugin.pane.focus` reports only to the
+  pane losing focus.
+- **Focus up from a full-width bar lands on the leftmost pane.** So the bar
+  remembers the pane its tab focused last and hands focus back to that one with
+  `pane.focus`, falling back to the pane above when it has gone.
 - **No pane can be under 10% of its tab.** `layout.set_split_ratio`,
   `pane.resize` and the mouse all stop at 0.1–0.9. Folding therefore closes
   the bars and puts a `command` entry in `tab_bar_right`; herdr strips ANSI
