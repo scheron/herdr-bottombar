@@ -10,8 +10,11 @@ spaces and agents in a bar along the bottom of every tab instead, and one key
 swaps the two layouts.
 
 <p align="center">
-  <img src="assets/vertical.png" alt="The vertical layout: a pane's output above, and along the bottom a bar with spaces on the left — agent state, name, branch, ahead/behind — and agents on the right in attention order, above herdr's tab bar" width="900">
+  <img src="assets/portrait.png" alt="A portrait terminal window running herdr in the vertical layout: an editor and a shell stacked in the tab, and along the bottom the bar with spaces on the left and agents on the right, above herdr's tab bar" width="410">
+  &nbsp;
+  <img src="assets/portrait-folded.png" alt="The same window with the bar folded: the panes take the full height and one line at the right end of the tab bar names the current space, its branch and the current agent" width="410">
 </p>
+<p align="center"><sub>The vertical layout on a portrait screen — the bar, and the bar folded into the tab bar.</sub></p>
 
 ## Install
 
@@ -54,6 +57,10 @@ Folded, the bar closes and its gist moves to the right end of the tab bar:
 </p>
 
 ## The bar
+
+<p align="center">
+  <img src="assets/vertical.png" alt="The bar up close: spaces on the left with agent state, name, branch and ahead/behind; agents on the right in attention order with a count of the ones that need you" width="900">
+</p>
 
 Spaces on the left, as the sidebar shows them: agent state, name, branch, and
 how far it is ahead (`↑`) of or behind (`↓`) its upstream. Agents on the right,
