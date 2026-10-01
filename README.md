@@ -9,14 +9,9 @@ sidebar takes a quarter of the one dimension you are short of. bottombar puts
 spaces and agents in a bar along the bottom of every tab instead, and one key
 swaps the two layouts.
 
-```
-│ claude …                                                          │
-│───────────────────────────────────────────────────────────────────│
-│ spaces                          │ agents               1 working  │
-│ · Due App  plan/frame-and-loop  │ ● dotfiles · claude    claude   │
-│ ● dotfiles  main ↑1             │                                 │
-│ 1 claude  2 tests  +                                              │
-```
+<p align="center">
+  <img src="assets/vertical.png" alt="The vertical layout: a pane's output above, and along the bottom a bar with spaces on the left — agent state, name, branch, ahead/behind — and agents on the right in attention order, above herdr's tab bar" width="900">
+</p>
 
 ## Install
 
@@ -54,9 +49,9 @@ folds whichever panel is on screen.
 
 Folded, the bar closes and its gist moves to the right end of the tab bar:
 
-```
-│ 1 claude  2 tests  +             ● dotfiles  main ↑1  │  ● claude working │
-```
+<p align="center">
+  <img src="assets/folded.png" alt="The folded bar: one line at the right end of the tab bar with the current space, its branch, and the current agent's state" width="900">
+</p>
 
 ## The bar
 
