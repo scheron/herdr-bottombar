@@ -1,0 +1,35 @@
+id = "scheron.bottombar"
+name = "bottombar"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+platforms = ["macos"]
+description = "A vertical layout for herdr on a portrait monitor: the left sidebar gives way to a spaces/agents bar along the bottom of every tab, and one key swaps the two layouts."
+
+[[actions]]
+id = "layout"
+title = "bottombar: swap the sidebar and the bottom bar"
+contexts = ["pane", "workspace"]
+command = ["/usr/bin/python3", "-B", "herdr/manage.py", "layout"]
+
+[[actions]]
+id = "minimize"
+title = "bottombar: fold the bar into the tab bar, or unfold it"
+contexts = ["pane", "workspace"]
+command = ["/usr/bin/python3", "-B", "herdr/manage.py", "minimize"]
+
+[[panes]]
+id = "bar"
+title = "bottombar"
+placement = "split"
+command = ["/usr/bin/python3", "-B", "herdr/panel.py"]
+
+[[startup]]
+command = ["/usr/bin/python3", "-B", "herdr/manage.py", "sync"]
+
+[[events]]
+on = "tab.created"
+command = ["/usr/bin/python3", "-B", "herdr/manage.py", "sync"]
+
+[[events]]
+on = "tab.focused"
+command = ["/usr/bin/python3", "-B", "herdr/manage.py", "sync"]
