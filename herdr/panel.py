@@ -84,11 +84,12 @@ def sgr(fg=None, bg=None, bold=False):
     return "\x1b[" + ";".join(codes) + "m"
 
 
-def cell(width, left, right=(), bg=None):
-    """Render styled segments into exactly `width` columns: `left` clipped, `right` flush right."""
+def cell(width, left, right=(), bg=None, min_left=12):
+    """Render styled segments into exactly `width` columns: `left` clipped, `right` flush right,
+    and `right` dropped when it would leave `left` fewer than `min_left` columns."""
     right_w = sum(text_width(t) for t, _ in right)
     avail = width - right_w - (1 if right else 0)
-    if right and avail < 12:
+    if right and avail < min_left:
         right, right_w, avail = (), 0, width
     out, used = [], 0
     for text, style in left:
@@ -268,7 +269,7 @@ class Panel:
             end = min(len(items), self.offset[col] + rows)
             right = [("%d–%d/%d " % (start, end, len(items)), {"fg": DIM})]
         style = {"fg": ACCENT if self.focused and self.col == col else DIM}
-        return cell(width, [(" " + title, style)], right)
+        return cell(width, [(" " + title, style)], right, min_left=text_width(title) + 2)
 
     def space_row(self, item, width, selected):
         icon, color = STATUS.get(item["status"], STATUS["unknown"])
